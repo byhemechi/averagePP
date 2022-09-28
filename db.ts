@@ -4,7 +4,7 @@ import {
   type QueryParameter,
 } from "https://deno.land/x/sqlite@v3.5.0/mod.ts";
 
-const db = new DB("data.db");
+const db = new DB("pp.db");
 export default db;
 
 export function sql<T extends RowObject>(

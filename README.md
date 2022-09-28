@@ -9,3 +9,5 @@ deno run -A mod.ts AU NZ PT DE # (etc)
 # if you just want to run the thing
 deno run --allow-net --allow-read --allow-write https://raw.githubusercontent.com/byhemechi/averagePP/master/mod.ts AU NZ PT DE # (etc)
 ```
+
+The data is stored in a file called `pp.db` in the current directory
