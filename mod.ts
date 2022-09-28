@@ -1,8 +1,11 @@
 import { components as ScoreSaber } from "./types/scoresaber.ts";
 import getPage from "./getPage.ts";
 import { init, sql } from "./db.ts";
+import { assert } from "https://deno.land/std/testing/asserts.ts";
 
 const countries = Deno.args;
+assert(countries.length > 0, "No countries specified");
+
 const threads = 20;
 
 const sleep = (time: number): Promise<void> =>
