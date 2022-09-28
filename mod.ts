@@ -1,8 +1,8 @@
 import { components as ScoreSaber } from "./types/scoresaber.ts";
 import getPage from "./getPage.ts";
-import raw from "./data.json" assert { type: "json" };
+import { init, sql } from "./db.ts";
 
-const countries = ["PT", "NZ"];
+const countries = Deno.args;
 const threads = 20;
 
 const sleep = (time: number): Promise<void> =>
@@ -10,12 +10,14 @@ const sleep = (time: number): Promise<void> =>
     setTimeout(resolve, time);
   });
 
-const data: {
+type CountryRow = {
   country: string;
   average: number;
   median: number;
   population: number;
-}[] = raw;
+};
+
+init();
 
 for (const country of countries) {
   console.log(country, "\n");
@@ -49,19 +51,17 @@ for (const country of countries) {
       return prev + current.pp;
     }, 0) / players.length;
 
-  data.push({
-    country,
-    average: Math.round(averageRank * 100) / 100,
-    median: players[Math.floor(players.length / 2)].pp,
-    population: metadata.total,
-  });
+  sql`INSERT OR REPLACE INTO countries(country, average, median, population) VALUES
+    (
+      ${country},
+      ${averageRank},
+      ${players[Math.floor(players.length / 2)].pp},
+      ${metadata.total}
+    )`;
 
-  Deno.writeFileSync(
-    "data.json",
-    new TextEncoder().encode(JSON.stringify(data, undefined, 2))
+  console.table(
+    await Promise.all(sql<CountryRow>`SELECT * from countries ORDER BY average`)
   );
-
-  console.table(data.sort((a, b) => b.average - a.average));
 
   await sleep(Date.now() - reset * 1000);
 }
